@@ -11,7 +11,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "jsx": "react",
-    "jsxFactory": "h"
+    "jsxFactory": "h",
+    "typeRoots": ["./node_modules/@types", "macbis-design.github.io/dompurify.d.ts", ]
   },
   "include": ["src"],
   "exclude": ["node_modules"]

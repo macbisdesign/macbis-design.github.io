@@ -1,5 +1,6 @@
 import { Component, Host, h, Prop } from "@stencil/core";
 import cn from "classnames";
+import DOMPurify from 'dompurify'; // will help validate input
 
 @Component({
   tag: "input-component",
@@ -22,7 +23,22 @@ export class InputComponent {
   /** If true, the field is required */
   @Prop() required = false;
 
+  private sanitizeInput( input: string ): string { // cleans dirty/potentially dangerous HTML
+    return DOMPurify.sanitize(input);
+  }
+
+  private validateInput( input: string): boolean { // validation function
+    if ( input.length <= 0 ) // input cannot be empty
+      return false;
+  // ! Insert other necessary validation here ! //
+    return true; // validation complete
+  }
+
   render() {
+    
+    const sanitizedLabel = this.sanitizeInput( this.label );
+    const checkInput = this.validateInput( sanitizedLabel ); // uses sanitized label
+
     return (
       <Host>
         <div class="flex flex-col items-start gap-y-2">
@@ -32,10 +48,10 @@ export class InputComponent {
                 this.required,
             })}
           >
-            {this.label}
+            { checkInput ? sanitizedLabel : 'Invalid Input'}
           </label>
 
-          {this.helpText && <span>{this.helpText}</span>}
+          {this.helpText && <span>{this.sanitizeInput( this.helpText )}</span>}
 
           <input
             class={cn(
@@ -53,7 +69,7 @@ export class InputComponent {
             placeholder={this.placeholder}
             disabled={this.disabled}
             // added interactive label
-            aria-label={this.label}
+            aria-label={ checkInput ? sanitizedLabel : 'Invalid Input'}
           />
         </div>
       </Host>
